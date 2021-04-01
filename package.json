@@ -1,0 +1,11 @@
+{
+  "name": "IBM_Watson_Asssistant_Beblue_Cielo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/MrVtR/IBM_Watson_Asssistant_Beblue_Cielo.git",
+  "author": "MrVtR <30987772+MrVtR@users.noreply.github.com>",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.1"
+  }
+}
