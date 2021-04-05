@@ -1,6 +1,6 @@
 require('dotenv/config');
 const axios = require('axios');
-const main = async ({ name, price, description }) => {
+const main = async () => {
   const clientConcat = process.env.CLIENT_CONCAT;
   const url = 'https://cieloecommerce.cielo.com.br/api/public/v2/token';
   const headers = {
@@ -27,12 +27,20 @@ const main = async ({ name, price, description }) => {
           'Content-Type': 'application/json',
         },
       };
-      const link = await axios(payloadPayment)
+      const pagamentoCheckout = await axios(payloadPayment)
         .then((response) => {
           console.log(response.data);
-          return {
-            link: response.data.shortUrl,
-          };
+          if (response.data.orders.length == 0)
+            return {
+              checkout: 'ERRO: Não foi pago ainda',
+            };
+          else if (
+            response.data.orders[0].createdDate != null &&
+            response.data.orders[0].status != 'Denied'
+          )
+            return {
+              checkout: 'Pago',
+            };
         })
         .catch((err) => {
           console.log(
@@ -45,7 +53,7 @@ const main = async ({ name, price, description }) => {
             statusText: err.response.statusText,
           };
         });
-      return link;
+      return pagamentoCheckout;
     })
     .catch((err) => {
       console.log('Erro na obtenção do Token:', err);
