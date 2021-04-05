@@ -19,20 +19,17 @@ const main = async ({ name, price, description }) => {
       const payloadPayment = {
         method: 'GET',
         url:
-          'https://cieloecommerce.cielo.com.br/api/public/v1/products/{id}/payments',
+          'https://cieloecommerce.cielo.com.br/api/public/v1/products/' +
+          process.env.ID_PAGAMENTO +
+          '/payments',
         headers: {
           Authorization: `Bearer ${token.access_token}`,
           'Content-Type': 'application/json',
         },
-        data: {
-          $id: '1',
-          productId: 'd04d2e67-5616-43fc-ac3a-68ba98666ce0',
-          createdDate: '2021-04-01 15:30:44',
-        },
       };
       const link = await axios(payloadPayment)
         .then((response) => {
-          console.log(response);
+          console.log(response.data);
           return {
             link: response.data.shortUrl,
           };

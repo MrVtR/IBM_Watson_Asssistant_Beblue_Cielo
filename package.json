@@ -6,6 +6,7 @@
   "author": "MrVtR <30987772+MrVtR@users.noreply.github.com>",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.21.1"
+    "axios": "^0.21.1",
+    "dotenv": "^8.2.0"
   }
 }
