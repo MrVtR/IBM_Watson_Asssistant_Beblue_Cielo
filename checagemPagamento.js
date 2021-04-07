@@ -1,7 +1,14 @@
+require('dotenv/config');
 const axios = require('axios');
-const main = async ({ agent, name, price, description, idPagamento }) => {
-  const clientConcat =
-    '30b07143-4bf7-4f5a-8ffe-8464f65e9ade:uuQgD0qdlxjtV96dhB3yrjDcejitpcoUjtdfffUErsw=';
+const main = async ({
+  agent,
+  name,
+  price,
+  description,
+  idPagamento,
+  softDescriptor,
+}) => {
+  const clientConcat = process.env.CLIENT_CONCAT;
   const url = 'https://cieloecommerce.cielo.com.br/api/public/v2/token';
   const headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
@@ -29,7 +36,7 @@ const main = async ({ agent, name, price, description, idPagamento }) => {
             data: {
               name: name,
               price: price,
-              softDescriptor: 'Assistencia',
+              softDescriptor: softDescriptor,
               description: description,
               type: 'Payment',
               shipping: {
@@ -73,6 +80,7 @@ async function linkPagamento(payloadPayment) {
   const link = await axios(payloadPayment)
     .then((response) => {
       console.log(response.data.shortUrl);
+      console.log(response.data.id);
       return {
         id: response.data.id,
         link: response.data.shortUrl,
@@ -95,24 +103,17 @@ async function linkPagamento(payloadPayment) {
 async function checkoutPagamento(payloadPayment) {
   const pagamentoCheckout = await axios(payloadPayment)
     .then((response) => {
-      console.log(response.data);
-      if (response.data.orders.length == 0)
+      if (response.data.orders.length == 0) {
+        console.log('Não foi pago');
         return {
-          checkoutNaoPago:
-            'Não foi pago ainda, por favor, efetue seu pagamento no link fornecido anteriormente.',
+          checkout: 'Não foi pago',
         };
-      else if (
-        response.data.orders[0].createdDate === null ||
-        response.data.orders[0].status === 'Denied'
-      )
+      } else {
+        console.log(response.data.orders[0].payment.status);
         return {
-          checkoutError:
-            'Erro no pagamento, verifique com sua operadora de cartão para checar o estorno da compra e efetue novamente sua compra no link fornecido anteriormente',
+          checkout: response.data.orders[0].payment.status,
         };
-      else
-        return {
-          checkoutPago: 'Pago, obrigado por contratar nossos serviços',
-        };
+      }
     })
     .catch((err) => {
       console.log(
@@ -127,7 +128,16 @@ async function checkoutPagamento(payloadPayment) {
     });
   return pagamentoCheckout;
 }
+
 main({
   agent: 1,
-  idPagamento: 'Insira o ID do pagamento aqui',
+  idPagamento: process.env.ID_PAGAMENTO,
 });
+
+// main({
+//   name: 'Assistência Auto',
+//   price: '10000',
+//   description: 'Assistência Auto',
+//   agent: 0,
+//   softDescriptor: 'BEBLUERes',
+// });
