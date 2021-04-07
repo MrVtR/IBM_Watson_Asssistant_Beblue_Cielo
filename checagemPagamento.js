@@ -109,9 +109,13 @@ async function checkoutPagamento(payloadPayment) {
           checkout: 'Não foi pago',
         };
       } else {
-        console.log(response.data.orders[0].payment.status);
+        console.log(
+          response.data.orders[response.data.orders.length - 1].payment.status,
+        );
         return {
-          checkout: response.data.orders[0].payment.status,
+          checkout:
+            response.data.orders[response.data.orders.length - 1].payment
+              .status,
         };
       }
     })
